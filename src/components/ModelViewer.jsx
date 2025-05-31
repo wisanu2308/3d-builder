@@ -35,23 +35,34 @@ export function ModelViewer({ modelPath }) {
   }, [color, wireframe, scene]);
 
   return (
-    <div className="relative w-full h-screen">
-      <div className="absolute top-4 left-4 z-10 flex flex-col gap-2">
-        {colorOptions.map((c) => (
-          <div
-            key={c}
-            onClick={() => setColor(c)}
-            className="w-8 h-8 rounded cursor-pointer border border-gray-300 shadow"
-            style={{
-              backgroundColor: c === "transparent" ? "white" : c,
-              backgroundImage:
-                c === "transparent"
-                  ? "repeating-conic-gradient(#ccc 0% 25%, #fff 0% 50%) 50% / 10px 10px"
-                  : "none",
-            }}
-            title={c}
-          />
-        ))}
+    <div className="relative w-full h-screen flex flex-col items-center">
+      {/* Control Panel */}
+      <div
+        className="
+          absolute z-10 gap-2 p-4 bg-white bg-opacity-80 rounded
+          flex flex-col md:flex-col
+          top-4
+          left-1/2 -translate-x-1/2
+          md:left-4 md:top-4 md:translate-x-0
+        "
+      >
+        <div className="flex flex-wrap justify-center md:flex-col md:justify-start gap-2">
+          {colorOptions.map((c) => (
+            <div
+              key={c}
+              onClick={() => setColor(c)}
+              className="w-8 h-8 rounded cursor-pointer border border-gray-300 shadow"
+              style={{
+                backgroundColor: c === "transparent" ? "white" : c,
+                backgroundImage:
+                  c === "transparent"
+                    ? "repeating-conic-gradient(#ccc 0% 25%, #fff 0% 50%) 50% / 10px 10px"
+                    : "none",
+              }}
+              title={c}
+            />
+          ))}
+        </div>
         <label className="text-sm mt-2">
           <input
             type="checkbox"
@@ -63,15 +74,18 @@ export function ModelViewer({ modelPath }) {
         </label>
       </div>
 
-      <Canvas className="w-full">
-        <ambientLight />
-        <Suspense fallback={null}>
-          <Stage environment="city" intensity={0.6}>
-            <primitive object={scene} scale={0.8} />
-          </Stage>
-        </Suspense>
-        <OrbitControls enableZoom />
-      </Canvas>
+      {/* Canvas 3D */}
+      <div className="w-full h-full md:flex-1 aspect-[9/16] md:aspect-auto">
+        <Canvas className="w-full h-full">
+          <ambientLight />
+          <Suspense fallback={null}>
+            <Stage environment="city" intensity={0.6}>
+              <primitive object={scene} scale={0.8} />
+            </Stage>
+          </Suspense>
+          <OrbitControls enableZoom />
+        </Canvas>
+      </div>
     </div>
   );
 }
