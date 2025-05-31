@@ -5,14 +5,16 @@ import { Suspense } from "react";
 export function ModelViewer({ modelPath }) {
   const { scene } = useGLTF(modelPath);
   return (
-    <Canvas className="fixed top-0 left-0 w-full h-full bg-white">
-      <ambientLight />
-      <Suspense fallback={null}>
-        <Stage environment="city" intensity={0.6}>
-          <primitive object={scene} scale={2.5} />
-        </Stage>
-      </Suspense>
-      <OrbitControls enableZoom />
-    </Canvas>
+    <div className="w-full h-screen">
+      <Canvas className="w-full bg-red-400">
+        <ambientLight />
+        <Suspense fallback={null}>
+          <Stage environment="city" intensity={0.6}>
+            <primitive object={scene} scale={0.8} />
+          </Stage>
+        </Suspense>
+        <OrbitControls enableZoom />
+      </Canvas>
+    </div>
   );
 }

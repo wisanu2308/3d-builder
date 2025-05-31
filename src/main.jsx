@@ -5,7 +5,8 @@ import App from "./App.jsx";
 import Backpack from "./routes/Backpack.jsx";
 import Tshirt from "./routes/Tshirt.jsx";
 import Hat from "./routes/Hat.jsx";
-import "./index.css";
+import "./App.css";
+// import "./index.css";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
