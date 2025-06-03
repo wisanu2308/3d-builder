@@ -1,59 +1,59 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 
-const iframeCode = `<div style="width: 100%">
-  <iframe
-    src="https://ly3dbuilder.netlify.app/backpack"
-    style="width: 100%; height: 100%; border: none; overflow: 'hidden'"
-    scrolling="no"
-    allowfullscreen
-  ></iframe>
-</div>`;
-
 export default function App() {
-  const [copied, setCopied] = useState(false);
+  const [copiedUrl, setCopiedUrl] = useState(null);
 
-  const copyToClipboard = () => {
+  const copyToClipboard = (url) => {
+    const iframeCode = `
+      <div style="width: 100%">
+        <iframe
+          src="https://ly3dbuilder.netlify.app${url}"
+          style="width: 100%; height: 100%; border: none; overflow: hidden;"
+          scrolling="no"
+          allowfullscreen
+        ></iframe>
+      </div>
+    `;
+
     navigator.clipboard.writeText(iframeCode).then(() => {
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000); // รีเซ็ตข้อความหลัง 2 วินาที
+      setCopiedUrl(url);
+      setTimeout(() => setCopiedUrl(null), 2000); // รีเซ็ตหลัง 2 วิ
     });
   };
 
-  const EmbedButton = (
-  { url } = { url: "/backpack" } 
-  ) => (
-    <div className="w-full flex justify-center py-3">
-      { url }
-      <div
-        onClick={copyToClipboard}
-        className="w-max cursor-pointer px-3 py-1 rounded transition bg-white border"
-      >
-        {copied ? "Copied!" : "Embed Code"}
+  const ModelItems = ({ title, url }) => (
+    <div className="flex flex-col items-start">
+      <div className="w-[450px] flex flex-row justify-between items-center gap-4 border p-4">
+        <div className="w-1/2">
+          <div>{title}</div>
+        </div>
+        <div className="w-1/2 flex flex-col justify-end items-end gap-2 text-sm">
+          <Link to={url}>
+            <div className="w-[100px] text-center cursor-pointer py-1 rounded transition duration-200 bg-white hover:bg-slate-100 border">
+              Model Viewer
+            </div>
+          </Link>
+          <div
+            onClick={() => copyToClipboard(url)}
+            className="w-[100px] text-center cursor-pointer py-1 rounded transition duration-200 bg-white hover:bg-slate-100 border"
+          >
+            {copiedUrl === url ? "Copied!" : "Embed Code"}
+          </div>
+        </div>
       </div>
     </div>
   );
 
   return (
-    <div className="w-full h-screen flex flex-col items-center gap-6 text-xl">
+    <div className="w-full h-screen flex flex-col justify-center items-center gap-6 text-xl">
       <h1 className="text-3xl font-bold">3D Builder</h1>
-      <div className="flex flex-row gap-2">
-        <Link to="/backpack" className="text-blue-500">
-          Backpack
-        </Link>
-        <div><EmbedButton url="/backpack" /></div>
-      </div>
-      <div className="flex flex-row gap-2">
-        <Link to="/tshirt" className="text-blue-500">
-          T-Shirt
-        </Link>
-        <div><EmbedButton url="/tshirt" /></div>
-      </div>
-      <div className="flex flex-row gap-2">
-        <Link to="/hat" className="text-blue-500">
-          Hat
-        </Link>
-        <div><EmbedButton url="/hat" /></div>
+
+      <div className="flex flex-col items-start gap-2">
+        <ModelItems title={"Short Pant"} url="/short-pant" />
+        <ModelItems title={"Backpack"} url="/backpack" />
+        <ModelItems title={"T-Shirt"} url="/tshirt" />
+        <ModelItems title={"Hat"} url="/hat" />
       </div>
     </div>
   );

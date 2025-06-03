@@ -1,23 +1,47 @@
 - .gitignore
 - dist
   - assets
-    - index-Cv-TXkKs.css
-    - index-DVDqdOvz.js
-    - react-CHdo91hT.svg
+    - index-BfV6skG8.js
+    - index-N7FUS5Rv.css
   - index.html
+  - models
+    - backpack_example.glb
+    - t-shirt.glb
+  - textures
+    - bear.png
+    - dog.png
+    - kitty.png
   - vite.svg
+  - _redirects
 - eslint.config.js
 - index.html
 - package-lock.json
 - package.json
+- project_structure.text
 - public
+  - models
+    - backpack_example.glb
+    - pant.glb
+    - t-shirt.glb
+  - textures
+    - bear.png
+    - dog.png
+    - kitty.png
   - vite.svg
+  - _redirects
 - README.md
 - src
   - App.css
   - App.jsx
   - assets
     - react.svg
+  - components
+    - ModelViewer.jsx
   - index.css
   - main.jsx
+  - routes
+    - Backpack.jsx
+    - Hat.jsx
+    - ShortPant.jsx
+    - Tshirt.jsx
 - vite.config.js
