@@ -58,7 +58,11 @@ function Model({ selectedPantone }) {
       const center = new THREE.Vector3();
       box.getCenter(center);
       ref.current.position.sub(center);
+    }
+  }, []);
 
+  useEffect(() => {
+    if (ref.current) {
       // เปลี่ยนสี
       ref.current.traverse((child) => {
         if (child.isMesh && child.material) {
