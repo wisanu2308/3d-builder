@@ -2,15 +2,18 @@ import { Canvas, useFrame } from "@react-three/fiber";
 import { OrbitControls, useGLTF } from "@react-three/drei";
 import * as THREE from "three";
 import { useRef, useEffect, useState } from "react";
+import { Icon } from "@iconify/react";
 
 const modelPath = "/models/example.glb";
+const modelName = "ExampleModel";
 const materialName01 = "Serviette";
 const materialName02 = "Serviette_2";
+const isShowModelName = false;
 
 const materialOptions = [
   {
     name: materialName01,
-    colors: ["#F4A261", "#E76F51"]
+    colors: ["#F4A261", "#E76F51"],
   },
   {
     name: materialName02,
@@ -117,6 +120,7 @@ export default function ExampleMesh() {
   const [customizingIndex, setCustomizingIndex] = useState(null);
   const [customColor, setCustomColor] = useState("#000000");
   const [showDialog, setShowDialog] = useState(false);
+  const [showColorPanel, setShowColorPanel] = useState(true);
 
   const [originalColors, setOriginalColors] = useState([]);
   const dialogRef = useRef(null);
@@ -137,7 +141,7 @@ export default function ExampleMesh() {
     if (showDialog) {
       document.addEventListener("mousedown", handleOnClickOutside);
     } else {
-      document.removeEventListener("mousedown", handleOnClickOutside); 
+      document.removeEventListener("mousedown", handleOnClickOutside);
     }
 
     return () => {
@@ -168,67 +172,108 @@ export default function ExampleMesh() {
 
   return (
     <div className="w-screen h-screen bg-gray-100 flex flex-col overflow-hidden">
-      <div className="relative p-4 bg-white shadow-md w-full flex flex-col gap-4">
-        {materialOptions.map((matItem, index) => {
-          const originalColor = originalColors[index] || "transparent";
-          const selected = selectedColors[index];
-
-          return (
-            <div key={index} className="flex flex-col">
-              <div className="flex flex-row items-center gap-2">
-                <div className="font-semibold whitespace-nowrap">
-                  Color #{index + 1}
-                </div>
-                <div className="text-xs text-gray-400">({matItem.name})</div>
+      <div
+        className={`
+          relative p-4  w-full flex flex-col transition-all duration-300
+          ${
+            showColorPanel ? "gap-4 bg-white shadow-md" : "gap-0 bg-transparent"
+          } 
+        `}
+      >
+        <div className={`flex flex-row items-center ${isShowModelName ? "justify-between" : "justify-end"}`}>
+          {isShowModelName && (
+            <h2 className="text-xl font-semibold">{modelName}</h2>
+          )}
+          <button
+            onClick={() => setShowColorPanel((prev) => !prev)}
+            className="px-3 py-1 border text-sm bg-white border-slate-400"
+          >
+            <div className="flex items-center gap-2 text-slate-600">
+              <div>{showColorPanel ? "Hide" : "Show"} Color</div>
+              <div
+                className={`text-lg transition-all duration-500 ${
+                  !showColorPanel ? "-rotate-180" : ""
+                }`}
+              >
+                <Icon icon="icon-park-solid:up-one" />
               </div>
-              <div className="flex flex-row justify-start items-center gap-2 overflow-x-auto overflow-y-visible px-1 pt-2">
-                {/* Original Color */}
-                <button
-                  onClick={() =>
-                    updateSelectedPantoneColor(index, originalColor)
-                  }
-                  className={`w-10 h-10 rounded-full border-4 ${
-                    selected === originalColor
-                      ? "border-blue-500"
-                      : "border-slate-300"
-                  }`}
-                  style={{ background: originalColor }}
-                  title="Original Color"
-                />
+            </div>
+          </button>
+        </div>
 
-                {/* Swatches */}
-                {matItem.colors.map((color, i) => (
+        <div
+          className={`
+            overflow-hidden transition-all duration-200 ease-in-out
+            ${
+              showColorPanel
+                ? "max-h-[1000px] opacity-100"
+                : "max-h-0 opacity-0"
+            }
+          `}
+        >
+          {materialOptions.map((matItem, index) => {
+            const originalColor = originalColors[index] || "transparent";
+            const selected = selectedColors[index];
+
+            return (
+              <div key={index} className="flex flex-col">
+                <div className="flex flex-row items-center gap-2">
+                  <div className="font-semibold whitespace-nowrap">
+                    Color #{index + 1}
+                  </div>
+                  <div className="text-xs text-gray-400">({matItem.name})</div>
+                </div>
+                <div className="flex flex-row justify-start items-center gap-2 overflow-x-auto overflow-y-visible px-1 pt-2">
+                  {/* Original Color */}
                   <button
-                    key={color + i}
-                    onClick={() => updateSelectedPantoneColor(index, color)}
-                    className={`w-10 h-10 rounded-full border-4 cursor-pointer ${
-                      selected === color
+                    onClick={() =>
+                      updateSelectedPantoneColor(index, originalColor)
+                    }
+                    className={`w-10 h-10 rounded-full transition-all duration-100 border-4 ${
+                      selected === originalColor
                         ? "border-blue-500"
                         : "border-slate-300"
                     }`}
-                    style={{ background: color }}
-                    title={`Color ${i + 1}`}
+                    style={{ background: originalColor }}
+                    title="Original Color"
                   />
-                ))}
 
-                {/* Custom Color Button */}
-                <button
-                  onClick={() => openCustomColorDialog(index)}
-                  className="w-10 h-10 rounded-full border-2 border-slate-400 flex items-center justify-center text-xl font-bold text-slate-600 cursor-pointer"
-                  title="Add custom color"
-                >
-                  <div className="-translate-y-0.5">+</div>
-                </button>
+                  {/* Swatches */}
+                  {matItem.colors.map((color, i) => (
+                    <button
+                      key={color + i}
+                      onClick={() => updateSelectedPantoneColor(index, color)}
+                      className={`w-10 h-10 rounded-full border-4 cursor-pointer ${
+                        selected === color
+                          ? "border-blue-500"
+                          : "border-slate-300"
+                      }`}
+                      style={{ background: color }}
+                      title={`Color ${i + 1}`}
+                    />
+                  ))}
+
+                  {/* Custom Color Button */}
+                  <button
+                    onClick={() => openCustomColorDialog(index)}
+                    className="w-10 h-10 rounded-full border-2 border-slate-400 flex items-center justify-center text-xl font-bold text-slate-600 cursor-pointer"
+                    title="Add custom color"
+                  >
+                    <div className="-translate-y-0.5">+</div>
+                  </button>
+                </div>
               </div>
-            </div>
-          );
-        })}
+            );
+          })}
+        </div>
       </div>
 
       {showDialog && (
         <div className="fixed inset-0 bg-transparent flex items-center justify-center z-50">
-          <div ref={dialogRef} className="relative max-w-xs w-full flex flex-col gap-2 bg-white p-4 rounded shadow-lg">
-
+          <div
+            ref={dialogRef}
+            className="relative max-w-xs w-full flex flex-col gap-2 transition-all duration-300 bg-white p-4 rounded shadow-lg"
+          >
             <div className="absolute top-0 right-0 -translate-y-2">
               <button
                 onClick={() => setShowDialog(false)}
