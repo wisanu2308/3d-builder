@@ -119,13 +119,31 @@ export default function ExampleMesh() {
   const [showDialog, setShowDialog] = useState(false);
 
   const [originalColors, setOriginalColors] = useState([]);
+  const dialogRef = useRef(null);
 
-  // อัพเดต selectedColors เป็น original color ตอนโหลดโมเดลเสร็จ
   useEffect(() => {
     if (originalColors.length > 0) {
       setSelectedColors(originalColors);
     }
   }, [originalColors]);
+
+  useEffect(() => {
+    const handleOnClickOutside = (event) => {
+      if (dialogRef.current && !dialogRef.current.contains(event.target)) {
+        setShowDialog(false);
+      }
+    };
+
+    if (showDialog) {
+      document.addEventListener("mousedown", handleOnClickOutside);
+    } else {
+      document.removeEventListener("mousedown", handleOnClickOutside); 
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleOnClickOutside);
+    };
+  }, [showDialog]);
 
   const updateSelectedPantoneColor = (index, color) => {
     setSelectedColors((prev) => {
@@ -209,9 +227,20 @@ export default function ExampleMesh() {
 
       {showDialog && (
         <div className="fixed inset-0 bg-transparent flex items-center justify-center z-50">
-          <div className="max-w-xs w-full flex flex-col gap-2 bg-white p-4 rounded shadow-lg">
+          <div ref={dialogRef} className="relative max-w-xs w-full flex flex-col gap-2 bg-white p-4 rounded shadow-lg">
+
+            <div className="absolute top-0 right-0 -translate-y-2">
+              <button
+                onClick={() => setShowDialog(false)}
+                className="text-gray-500 hover:text-gray-700 cursor-pointer p-2 rounded-full transition-colors"
+                aria-label="Close dialog"
+              >
+                <div className="text-xl">&times;</div>
+              </button>
+            </div>
+
             <div className="flex flex-row items-center gap-2">
-              <h3 className="font-semibold">Add Color</h3>
+              <h3 className="font-semibold">Custom Color</h3>
               <div className="text-xs text-gray-400">
                 ({materialOptions[customizingIndex].name})
               </div>
@@ -231,20 +260,20 @@ export default function ExampleMesh() {
                 aria-label="Select custom color"
               />
             </div>
-            <div className="flex justify-end gap-2">
-              <button
+            <div className="flex flex-row justify-center items-center gap-2">
+              {/* <button
                 onClick={() => setShowDialog(false)}
                 className="px-3 py-1 rounded border border-slate-400 hover:bg-slate-100 cursor-pointer"
                 type="button"
               >
                 Cancel
-              </button>
+              </button> */}
               <button
                 onClick={addCustomColor}
                 className="px-3 py-1 rounded bg-blue-600 text-white hover:bg-blue-700 cursor-pointer"
                 type="button"
               >
-                Add
+                Add Color
               </button>
             </div>
           </div>
