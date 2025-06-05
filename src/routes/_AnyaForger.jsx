@@ -69,9 +69,6 @@ function Model({ selectedColors, onOriginalColors, onMaterialNames }) {
       });
       onOriginalColors(originalColors);
 
-      console.log("materialNames:", materialNames);
-      console.log("originalColors:", originalColors);
-
       ref.current.traverse((child) => {
         if (child.isMesh && child.material) {
           const materials = Array.isArray(child.material)

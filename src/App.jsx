@@ -52,6 +52,7 @@ export default function App() {
         <ModelItems title={"(( ≖‿ ≖ ))"} url="/anya-forger" />
         <ModelItems title={"Example Mesh"} url="/example" />
         <ModelItems title={"Backpack"} url="/backpack" />
+        <ModelItems title={"Fabric Sale"} url="/fabric-sale" />
       </div>
     </div>
   );

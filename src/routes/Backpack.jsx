@@ -7,7 +7,7 @@ import { AppConfig } from "../AppConfig";
 
 const isDevMode = AppConfig.devMode;
 const modelPath = "/models/backpack.glb";
-const modelName = "Example";
+const modelName = "Backpack";
 const defaultShowColorPanel = isDevMode;
 const isShowModelName = isDevMode;
 const initialColors = ["#F4A261", "#C0C0C0"];
@@ -68,9 +68,6 @@ function Model({ selectedColors, onOriginalColors, onMaterialNames }) {
         return foundColor;
       });
       onOriginalColors(originalColors);
-
-      console.log("materialNames:", materialNames);
-      console.log("originalColors:", originalColors);
 
       ref.current.traverse((child) => {
         if (child.isMesh && child.material) {
