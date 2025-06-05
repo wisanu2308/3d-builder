@@ -219,15 +219,15 @@ export default function ExampleMesh() {
 
         <div
           className={`
-           p-4 w-full flex flex-col transition-all duration-300
+           px-4 pt-4 pb-10 w-full transition-all duration-300
           ${
-            showColorPanel ? "gap-4 bg-white shadow-md" : "gap-0 bg-transparent"
+            showColorPanel ? "bg-white shadow-md" : "bg-transparent"
           } 
         `}
         >
           <div
             className={`
-            overflow-hidden transition-all duration-200 ease-in-out
+            flex flex-col md:flex-row gap-4 md:gap-10 overflow-hidden transition-all duration-200 ease-in-out
             ${
               showColorPanel
                 ? "max-h-[1000px] opacity-100"
