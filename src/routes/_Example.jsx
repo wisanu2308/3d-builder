@@ -1,8 +1,8 @@
-import { Canvas, useFrame } from "@react-three/fiber";
-import { OrbitControls, useGLTF } from "@react-three/drei";
-import * as THREE from "three";
-import { useRef, useEffect, useState } from "react";
 import { Icon } from "@iconify/react";
+import { OrbitControls, useGLTF } from "@react-three/drei";
+import { Canvas, useFrame } from "@react-three/fiber";
+import { useEffect, useRef, useState } from "react";
+import * as THREE from "three";
 
 const modelPath = "/models/example.glb";
 const modelName = "ExampleModel";
@@ -125,12 +125,34 @@ export default function ExampleMesh() {
 
   const [originalColors, setOriginalColors] = useState([]);
   const dialogRef = useRef(null);
+  const colorPanelRef = useRef(null);
 
   useEffect(() => {
     if (originalColors.length > 0) {
       setSelectedColors(originalColors);
     }
   }, [originalColors]);
+
+  // useEffect(() => {
+  //   const handleOnClickOutside = (event) => {
+  //     if (
+  //       colorPanelRef.current &&
+  //       !colorPanelRef.current.contains(event.target)
+  //     ) {
+  //       setShowColorPanel(false);
+  //     }
+  //   };
+
+  //   if (showColorPanel) {
+  //     document.addEventListener("mousedown", handleOnClickOutside);
+  //   } else {
+  //     document.removeEventListener("mousedown", handleOnClickOutside);
+  //   }
+
+  //   return () => {
+  //     document.removeEventListener("mousedown", handleOnClickOutside);
+  //   };
+  // }, [showColorPanel]);
 
   useEffect(() => {
     const handleOnClickOutside = (event) => {
@@ -172,38 +194,39 @@ export default function ExampleMesh() {
   };
 
   return (
-    <div className="w-screen h-screen bg-gray-100 flex flex-col overflow-hidden">
-      <div
-        className={`
-          relative p-4  w-full flex flex-col transition-all duration-300
-          ${
-            showColorPanel ? "gap-4 bg-white shadow-md" : "gap-0 bg-transparent"
-          } 
-        `}
-      >
-        <div className={`flex flex-row items-center ${isShowModelName ? "justify-between" : "justify-end"}`}>
-          {isShowModelName && (
-            <h2 className="text-xl font-semibold">{modelName}</h2>
-          )}
-          <button
-            onClick={() => setShowColorPanel((prev) => !prev)}
-            className="px-3 py-1 border text-sm bg-white border-slate-400"
+    <div className="relative w-screen h-screen bg-gray-100 flex flex-col overflow-hidden">
+      {/* Model Name Display */}
+      {isShowModelName && (
+        <div className="flex flex-row justify-start p-3 text-slate-500">
+          <h2 className="text-xl font-semibold">{modelName}</h2>
+        </div>
+      )}
+
+      {/* Color Panel */}
+      <div ref={colorPanelRef} className="absolute z-50 left-0 bottom-0 w-full">
+        <div
+          onClick={() => setShowColorPanel((prev) => !prev)}
+          className="w-max m-5 p-3 rounded-full shadow-md bg-white text-2xl text-slate-600 cursor-pointer"
+        >
+          <div
+            className={`transition-all duration-500 ${
+              !showColorPanel ? "" : "rotate-180"
+            }`}
           >
-            <div className="flex items-center gap-2 text-slate-600">
-              <div>{showColorPanel ? "Hide" : "Show"} Color</div>
-              <div
-                className={`text-lg transition-all duration-500 ${
-                  !showColorPanel ? "-rotate-180" : ""
-                }`}
-              >
-                <Icon icon="icon-park-solid:up-one" />
-              </div>
-            </div>
-          </button>
+            <Icon icon="icon-park-solid:up-one" />
+          </div>
         </div>
 
         <div
           className={`
+           p-4 w-full flex flex-col transition-all duration-300
+          ${
+            showColorPanel ? "gap-4 bg-white shadow-md" : "gap-0 bg-transparent"
+          } 
+        `}
+        >
+          <div
+            className={`
             overflow-hidden transition-all duration-200 ease-in-out
             ${
               showColorPanel
@@ -211,61 +234,64 @@ export default function ExampleMesh() {
                 : "max-h-0 opacity-0"
             }
           `}
-        >
-          {materialOptions.map((matItem, index) => {
-            const originalColor = originalColors[index] || "transparent";
-            const selected = selectedColors[index];
+          >
+            {materialOptions.map((matItem, index) => {
+              const originalColor = originalColors[index] || "transparent";
+              const selected = selectedColors[index];
 
-            return (
-              <div key={index} className="flex flex-col">
-                <div className="flex flex-row items-center gap-2">
-                  <div className="font-semibold whitespace-nowrap">
-                    Color #{index + 1}
+              return (
+                <div key={index} className="flex flex-col">
+                  <div className="flex flex-row items-center gap-2">
+                    <div className="font-semibold whitespace-nowrap">
+                      Color #{index + 1}
+                    </div>
+                    <div className="text-xs text-gray-400">
+                      ({matItem.name})
+                    </div>
                   </div>
-                  <div className="text-xs text-gray-400">({matItem.name})</div>
-                </div>
-                <div className="flex flex-row justify-start items-center gap-2 overflow-x-auto overflow-y-visible px-1 pt-2">
-                  {/* Original Color */}
-                  <button
-                    onClick={() =>
-                      updateSelectedPantoneColor(index, originalColor)
-                    }
-                    className={`w-10 h-10 rounded-full transition-all duration-100 border-4 ${
-                      selected === originalColor
-                        ? "border-blue-500"
-                        : "border-slate-300"
-                    }`}
-                    style={{ background: originalColor }}
-                    title="Original Color"
-                  />
-
-                  {/* Swatches */}
-                  {matItem.colors.map((color, i) => (
+                  <div className="flex flex-row justify-start items-center gap-2 overflow-x-auto overflow-y-visible px-1 pt-2">
+                    {/* Original Color */}
                     <button
-                      key={color + i}
-                      onClick={() => updateSelectedPantoneColor(index, color)}
-                      className={`w-10 h-10 rounded-full border-4 cursor-pointer ${
-                        selected === color
+                      onClick={() =>
+                        updateSelectedPantoneColor(index, originalColor)
+                      }
+                      className={`w-10 h-10 rounded-full transition-all duration-100 border-4 ${
+                        selected === originalColor
                           ? "border-blue-500"
                           : "border-slate-300"
                       }`}
-                      style={{ background: color }}
-                      title={`Color ${i + 1}`}
+                      style={{ background: originalColor }}
+                      title="Original Color"
                     />
-                  ))}
 
-                  {/* Custom Color Button */}
-                  <button
-                    onClick={() => openCustomColorDialog(index)}
-                    className="w-10 h-10 rounded-full border-2 border-slate-400 flex items-center justify-center text-xl font-bold text-slate-600 cursor-pointer"
-                    title="Add custom color"
-                  >
-                    <div className="-translate-y-0.5">+</div>
-                  </button>
+                    {/* Swatches */}
+                    {matItem.colors.map((color, i) => (
+                      <button
+                        key={color + i}
+                        onClick={() => updateSelectedPantoneColor(index, color)}
+                        className={`w-10 h-10 rounded-full border-4 cursor-pointer ${
+                          selected === color
+                            ? "border-blue-500"
+                            : "border-slate-300"
+                        }`}
+                        style={{ background: color }}
+                        title={`Color ${i + 1}`}
+                      />
+                    ))}
+
+                    {/* Custom Color Button */}
+                    <button
+                      onClick={() => openCustomColorDialog(index)}
+                      className="w-10 h-10 rounded-full border-2 border-slate-400 flex items-center justify-center text-xl font-bold text-slate-600 cursor-pointer"
+                      title="Add custom color"
+                    >
+                      <div className="-translate-y-0.5">+</div>
+                    </button>
+                  </div>
                 </div>
-              </div>
-            );
-          })}
+              );
+            })}
+          </div>
         </div>
       </div>
 
@@ -326,6 +352,7 @@ export default function ExampleMesh() {
         </div>
       )}
 
+      {/* 3D Model Canvas */}
       <div className="flex-grow transition-all duration-300">
         <Canvas camera={{ position: [0, 1, 3], fov: 50 }}>
           <ambientLight intensity={0.5} />
