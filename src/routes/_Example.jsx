@@ -8,6 +8,7 @@ const modelPath = "/models/example.glb";
 const modelName = "ExampleModel";
 const materialName01 = "Serviette";
 const materialName02 = "Serviette_2";
+const defaultShowColorPanel = false;
 const isShowModelName = false;
 
 const materialOptions = [
@@ -120,7 +121,7 @@ export default function ExampleMesh() {
   const [customizingIndex, setCustomizingIndex] = useState(null);
   const [customColor, setCustomColor] = useState("#000000");
   const [showDialog, setShowDialog] = useState(false);
-  const [showColorPanel, setShowColorPanel] = useState(true);
+  const [showColorPanel, setShowColorPanel] = useState(defaultShowColorPanel);
 
   const [originalColors, setOriginalColors] = useState([]);
   const dialogRef = useRef(null);
