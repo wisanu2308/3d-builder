@@ -50,6 +50,7 @@ export default function App() {
       <h1 className="text-3xl font-bold">3D Builder</h1>
 
       <div className="flex flex-col items-start gap-2">
+        <ModelItems title={"Example Mesh"} url="/example" />
         <ModelItems title={"Short Pant"} url="/short-pant" />
         <ModelItems title={"Backpack"} url="/backpack" />
         <ModelItems title={"T-Shirt"} url="/tshirt" />

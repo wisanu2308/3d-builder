@@ -7,6 +7,7 @@ import Backpack from "./routes/Backpack.jsx";
 import Hat from "./routes/Hat.jsx";
 import ShortPant from "./routes/ShortPant.jsx";
 import Tshirt from "./routes/Tshirt.jsx";
+import ExampleMesh from "./routes/_Example.jsx";
 // import "./index.css";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
@@ -14,6 +15,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<App />} />
+        <Route path="/example" element={<ExampleMesh />} />
         <Route path="/short-pant" element={<ShortPant />} />
         <Route path="/backpack" element={<Backpack />} />
         <Route path="/tshirt" element={<Tshirt />} />
