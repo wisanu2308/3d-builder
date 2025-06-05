@@ -139,7 +139,7 @@ function Model({ selectedColors, onOriginalColors, onMaterialNames }) {
   return <primitive object={scene} ref={ref} />;
 }
 
-export default function TShirt() {
+export default function Tshirt() {
   const [materialNames, setMaterialNames] = useState([]);
   const [originalColors, setOriginalColors] = useState([]);
   const [selectedColors, setSelectedColors] = useState([]);
