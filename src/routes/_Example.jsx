@@ -154,51 +154,57 @@ export default function ExampleMesh() {
   };
 
   return (
-    <div className="w-screen h-screen bg-gray-100 flex flex-col">
-      <div className="p-4 bg-white shadow-md flex items-center gap-4">
-        <span className="font-semibold">Select Colors:</span>
-        <div className="flex items-center gap-2">
+    <div className="w-screen h-screen bg-gray-100 flex flex-col overflow-hidden">
+      <div className="relative p-4 bg-white shadow-md flex flex-col md:flex-row items-start gap-2 md:gap-4">
+        <span className="relative z-0 font-semibold">Select Colors:</span>
+        <div className="relative z-0 flex items-center gap-2 overflow-x-auto max-w-full px-1">
           {colorPantones.map((pantone) => (
             <div
               key={pantone.name}
-              className="relative flex items-center gap-1"
+              className="relative z-10 flex items-center gap-1 px-1"
+              style={{ minWidth: 44, minHeight: 44 }}
             >
-              <button
-                onClick={() => {
-                  setSelectedPantone(pantone);
-                  setShowDialog(false);
-                }}
-                className={`w-10 h-10 rounded-full cursor-pointer border-4 ${
-                  selectedPantone.name === pantone.name && !showDialog
-                    ? "border-blue-500"
-                    : "border-slate-300"
-                }`}
-                style={{
-                  background: `linear-gradient(
-                    135deg,
-                    ${pantone.colors.index01} 50%,
-                    ${pantone.colors.index02} 50%
-                  )`,
-                }}
-                title={pantone.name}
-              />
-              {pantone.name.startsWith("Custom") && (
+              <div className="relative flex items-center justify-center" style={{ width: 40, height: 40 }}>
                 <button
-                  onClick={() => handleDeletePantone(pantone.name)}
-                  className="absolute top-0 right-0 z-10 -translate-y-2 translate-x-1 w-5 h-5 bg-red-500 rounded-full text-white flex items-center justify-center cursor-pointer hover:bg-red-600"
-                  title="Delete"
+                  onClick={() => {
+                    setSelectedPantone(pantone);
+                    setShowDialog(false);
+                  }}
+                  className={`w-10 h-10 rounded-full cursor-pointer border-4 ${
+                    selectedPantone.name === pantone.name && !showDialog
+                      ? "border-blue-500"
+                      : "border-slate-300"
+                  }`}
+                  style={{
+                    background: `linear-gradient(
+                      135deg,
+                      ${pantone.colors.index01} 50%,
+                      ${pantone.colors.index02} 50%
+                    )`,
+                  }}
+                  title={pantone.name}
                   type="button"
-                >
-                  <div className="-translate-y-[1px]">&times;</div>
-                </button>
-              )}
+                />
+                {pantone.name.startsWith("Custom") && (
+                  <button
+                    onClick={() => handleDeletePantone(pantone.name)}
+                    className="flex items-center justify-center w-5 h-5 bg-red-500 rounded-full text-white cursor-pointer hover:bg-red-600 border-2 border-white absolute top-0 right-0"
+                    style={{ transform: "translate(40%, -40%)" }}
+                    title="Delete"
+                    type="button"
+                  >
+                    <div className="-translate-y-[1px]">&times;</div>
+                  </button>
+                )}
+              </div>
             </div>
           ))}
           {!showDialog && (
             <button
               onClick={handleAddCustom}
-              className="w-10 h-10 rounded-full cursor-pointer border-4 border-slate-300 flex items-center justify-center text-xl font-bold text-gray-600"
+              className="w-10 h-10 rounded-full cursor-pointer border-4 border-slate-300 flex items-center justify-center text-xl font-bold text-gray-600 flex-shrink-0 ml-1"
               title="Add Custom"
+              type="button"
             >
               <div className="-translate-y-[1px]">+</div>
             </button>
