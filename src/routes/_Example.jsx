@@ -235,7 +235,7 @@ export default function ExampleMesh() {
                         type="color"
                         value={color}
                         onChange={(e) => setColor(e.target.value)}
-                        className="w-12 h-10 p-0 cursor-pointer"
+                        className="w-12 h-10 p-0 border border-slate-300 cursor-pointer"
                       />
                       <input
                         type="text"
