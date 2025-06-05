@@ -6,8 +6,8 @@ import * as THREE from "three";
 import { AppConfig } from "../AppConfig";
 
 const isDevMode = AppConfig.devMode;
-const modelPath = "/models/backpack.glb";
-const modelName = "Example";
+const modelPath = "/models/anya_forger.glb";
+const modelName = "Anya Forger";
 const defaultShowColorPanel = isDevMode;
 const isShowModelName = isDevMode;
 const initialColors = ["#F4A261", "#C0C0C0"];
@@ -139,7 +139,7 @@ function Model({ selectedColors, onOriginalColors, onMaterialNames }) {
   return <primitive object={scene} ref={ref} />;
 }
 
-export default function Backpack() {
+export default function AnyaForger() {
   const [materialNames, setMaterialNames] = useState([]);
   const [originalColors, setOriginalColors] = useState([]);
   const [selectedColors, setSelectedColors] = useState([]);

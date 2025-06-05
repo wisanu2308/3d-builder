@@ -4,10 +4,9 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import "./App.css";
 import App from "./App.jsx";
 import Backpack from "./routes/Backpack.jsx";
-import Hat from "./routes/Hat.jsx";
-import ShortPant from "./routes/ShortPant.jsx";
-import Tshirt from "./routes/Tshirt.jsx";
-import ExampleMesh from "./routes/_Example.jsx";
+import AnyaForger from "./routes/_AnyaForger.jsx";
+import Example from "./routes/_Example.jsx";
+import TShirt from "./routes/TShirt.jsx";
 // import "./index.css";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
@@ -15,11 +14,10 @@ ReactDOM.createRoot(document.getElementById("root")).render(
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<App />} />
-        <Route path="/example" element={<ExampleMesh />} />
-        <Route path="/short-pant" element={<ShortPant />} />
+        <Route path="/anya-forger" element={<AnyaForger />} />
+        <Route path="/example" element={<Example />} />
         <Route path="/backpack" element={<Backpack />} />
-        <Route path="/tshirt" element={<Tshirt />} />
-        <Route path="/hat" element={<Hat />} />
+        <Route path="/tshirt" element={<TShirt />} />
       </Routes>
     </BrowserRouter>
   </React.StrictMode>
