@@ -8,6 +8,11 @@ import { AppConfig } from "../../AppConfig";
 const isDevMode = AppConfig.devMode;
 const modelPaths = [
   {
+    name: "White-Red",
+    colors: ["#FFFFFF", "#FF0000"],
+    path: "/models/NikeTape_White-Red.glb",
+  },
+  {
     name: "Black-Red",
     colors: ["#000000", "#FF0000"],
     path: "/models/NikeTape_Black-Red.glb",
@@ -16,11 +21,6 @@ const modelPaths = [
     name: "Gray-Yellow",
     colors: ["#686868", "#EBE12D"],
     path: "/models/NikeTape_Grey-Yellow.glb",
-  },
-  {
-    name: "White-Red",
-    colors: ["#FFFFFF", "#FF0000"],
-    path: "/models/NikeTape_White-Red.glb",
   },
   {
     name: "Customize",
