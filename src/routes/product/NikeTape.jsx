@@ -138,9 +138,6 @@ export default function NikeTape() {
   const dialogRef = useRef(null);
   const colorPanelRef = useRef(null);
 
-  // Preload the initial model
-  useGLTF.preload(modelPaths[selectedModelIndex].path);
-
   // Create material options from material names
   const materialOptions = useMemo(() => {
     return materialNames.map((name, index) => ({
@@ -302,7 +299,6 @@ export default function NikeTape() {
               <div
                 key={index}
                 onClick={() => {
-                  setShowColorPanel(false);
                   setSelectedModelIndex(index);
                 }}
                 className={`w-10 h-10 rounded-full transition-all duration-100 border-4 cursor-pointer ${
