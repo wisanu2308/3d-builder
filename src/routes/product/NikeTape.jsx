@@ -47,77 +47,41 @@ function Model({
 
   useEffect(() => {
     const collectedNames = new Set();
-    const collectedColors = new Set();
+    const originalColorMap = {};
 
     if (ref.current) {
       const box = new THREE.Box3();
       ref.current.traverse((child) => {
-        if (child.isMesh) box.expandByObject(child);
-
-        if (child.material) {
+        if (child.isMesh) {
+          box.expandByObject(child);
           const materials = Array.isArray(child.material)
             ? child.material
             : [child.material];
           materials.forEach((mat) => {
-            if (mat && typeof mat.name === "string") {
+            if (mat?.name) {
               collectedNames.add(mat.name);
-              collectedColors.add(mat.color.getHexString());
+              if (!originalColorMap[mat.name]) {
+                originalColorMap[mat.name] = `#${mat.color.getHexString()}`;
+                mat.userData.originalColor = mat.color.clone();
+              }
             }
           });
         }
       });
 
+      // Scale + center
       const size = new THREE.Vector3();
       box.getSize(size);
       const maxDim = Math.max(size.x, size.y, size.z);
       const scale = 2 / maxDim;
       ref.current.scale.setScalar(scale);
-
       const center = new THREE.Vector3();
       box.getCenter(center);
       ref.current.position.sub(center);
 
       const materialNames = Array.from(collectedNames);
       onMaterialNames(materialNames);
-
-      const originalColors = materialNames.map((matName) => {
-        let foundColor = "#000000";
-        ref.current.traverse((child) => {
-          if (child.isMesh && child.material) {
-            const materials = Array.isArray(child.material)
-              ? child.material
-              : [child.material];
-            materials.forEach((mat) => {
-              if (mat?.name === matName) {
-                foundColor = `#${mat.color.getHexString()}`;
-              }
-            });
-          }
-        });
-        return foundColor;
-      });
-      onOriginalColors(originalColors);
-
-      ref.current.traverse((child) => {
-        if (child.isMesh && child.material) {
-          const materials = Array.isArray(child.material)
-            ? child.material
-            : [child.material];
-          materials.forEach((mat) => {
-            if (!mat || typeof mat.name !== "string") return;
-            if (!mat.userData.originalColor) {
-              mat.userData.originalColor = mat.color.clone();
-            }
-
-            const index = materialNames.findIndex((m) => m === mat.name);
-            if (index !== -1) {
-              originalColors[
-                index
-              ] = `#${mat.userData.originalColor.getHexString()}`;
-            }
-          });
-        }
-      });
+      onOriginalColors(materialNames.map((name) => originalColorMap[name]));
     }
   }, [onOriginalColors, onMaterialNames]);
 
@@ -134,13 +98,10 @@ function Model({
               mat.userData.originalColor = mat.color.clone();
             }
 
-            const index = selectedColors.findIndex(
-              (_, i) => mat.name === selectedColors[i]?.name
-            );
-            if (index === -1 || !selectedColors[index]?.color) return;
-            mat.userData.targetColor = new THREE.Color(
-              selectedColors[index].color
-            );
+            const selected = selectedColors.find((sc) => sc.name === mat.name);
+            if (selected) {
+              mat.userData.targetColor = new THREE.Color(selected.color);
+            }
           });
         }
       });
@@ -213,10 +174,6 @@ export default function NikeTape() {
       document.removeEventListener("mousedown", handleOnClickOutside);
     };
   }, [showDialog]);
-
-  // const onSelectModel = (index) => {
-  //   setSelectModelIndex(index);
-  // }
 
   const updateSelectedColor = (index, color) => {
     setSelectedColors((prev) => {
@@ -345,8 +302,8 @@ export default function NikeTape() {
               <div
                 key={index}
                 onClick={() => {
-                  setShowColorPanel(false)
-                  setSelectedModelIndex(index)
+                  setShowColorPanel(false);
+                  setSelectedModelIndex(index);
                 }}
                 className={`w-10 h-10 rounded-full transition-all duration-100 border-4 cursor-pointer ${
                   selectedModelIndex === index
