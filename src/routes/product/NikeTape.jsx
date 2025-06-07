@@ -1,17 +1,19 @@
 import { Icon } from "@iconify/react";
 import { OrbitControls, useGLTF } from "@react-three/drei";
 import { Canvas, useFrame } from "@react-three/fiber";
-import { useEffect, useRef, useState, useMemo } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import * as THREE from "three";
 import { AppConfig } from "../../AppConfig";
 
 const isDevMode = AppConfig.devMode;
+
+useGLTF.preload("/models/NikeTape_Black-Red.glb");
+useGLTF.preload("/models/NikeTape_Grey-Yellow.glb");
+useGLTF.preload("/models/NikeTape_White-Red.glb");
+useGLTF.preload("/models/NikeTape_Split.glb");
+
+const modelName = "Nike Tape";
 const modelPaths = [
-  {
-    name: "White-Red",
-    colors: ["#FFFFFF", "#FF0000"],
-    path: "/models/NikeTape_White-Red.glb",
-  },
   {
     name: "Black-Red",
     colors: ["#000000", "#FF0000"],
@@ -23,12 +25,17 @@ const modelPaths = [
     path: "/models/NikeTape_Grey-Yellow.glb",
   },
   {
+    name: "White-Red",
+    colors: ["#FFFFFF", "#FF0000"],
+    path: "/models/NikeTape_White-Red.glb",
+  },
+  {
     name: "Customize",
     colors: [],
     path: "/models/NikeTape_Split.glb",
   },
 ];
-const modelName = "Nike Tape";
+
 const initialColors = [
   ["#2F4F4F", "#708090", "#F5F5F5"],
   ["#1E3A8A", "#374151", "#D1D5DB"],
@@ -39,18 +46,24 @@ const initialColors = [
 function Model({
   modelPath,
   selectedColors,
-  onOriginalColors,
   onMaterialNames,
+  onOriginalColors,
 }) {
   const { scene } = useGLTF(modelPath);
   const ref = useRef();
 
   useEffect(() => {
+    if (!scene) return;
+    scene.position.set(0, 0, 0);
+    scene.rotation.set(0, 0, 0);
+    scene.scale.set(1, 1, 1);
+
     const collectedNames = new Set();
     const originalColorMap = {};
 
     if (ref.current) {
-      const box = new THREE.Box3();
+      const box = new THREE.Box3().setFromObject(scene);
+
       ref.current.traverse((child) => {
         if (child.isMesh) {
           box.expandByObject(child);
@@ -75,15 +88,17 @@ function Model({
       const maxDim = Math.max(size.x, size.y, size.z);
       const scale = 2 / maxDim;
       ref.current.scale.setScalar(scale);
+
       const center = new THREE.Vector3();
       box.getCenter(center);
+      scene.position.sub(center);
       ref.current.position.sub(center);
 
       const materialNames = Array.from(collectedNames);
       onMaterialNames(materialNames);
       onOriginalColors(materialNames.map((name) => originalColorMap[name]));
     }
-  }, [onOriginalColors, onMaterialNames]);
+  }, [scene, modelPath, onOriginalColors, onMaterialNames]);
 
   useEffect(() => {
     if (ref.current) {
@@ -421,8 +436,8 @@ export default function NikeTape() {
           <Model
             modelPath={modelPaths[selectedModelIndex].path}
             selectedColors={selectedColors}
-            onOriginalColors={setOriginalColors}
             onMaterialNames={setMaterialNames}
+            onOriginalColors={setOriginalColors}
           />
           <OrbitControls />
         </Canvas>
