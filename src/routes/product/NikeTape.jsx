@@ -6,13 +6,42 @@ import * as THREE from "three";
 import { AppConfig } from "../../AppConfig";
 
 const isDevMode = AppConfig.devMode;
-const modelPath = "/models/NikeTape_Split.glb";
+const modelPaths = [
+  {
+    name: "Black-Red",
+    colors: ["#000000", "#FF0000"],
+    path: "/models/NikeTape_Black-Red.glb",
+  },
+  {
+    name: "Gray-Yellow",
+    colors: ["#686868", "#EBE12D"],
+    path: "/models/NikeTape_Grey-Yellow.glb",
+  },
+  {
+    name: "White-Red",
+    colors: ["#FFFFFF", "#FF0000"],
+    path: "/models/NikeTape_White-Red.glb",
+  },
+  {
+    name: "Customize",
+    colors: [],
+    path: "/models/NikeTape_Split.glb",
+  },
+];
 const modelName = "Nike Tape";
-const defaultShowColorPanel = isDevMode;
-const isShowModelName = isDevMode;
-const initialColors = ["#EBE12D", "#686868", "#FFFFFF"];
+const initialColors = [
+  ["#2F4F4F", "#708090", "#F5F5F5"],
+  ["#1E3A8A", "#374151", "#D1D5DB"],
+  ["#4B5320", "#808000", "#A9A9A9"],
+  ["#A0522D", "#8B4513", "#D2B48C"],
+];
 
-function Model({ selectedColors, onOriginalColors, onMaterialNames }) {
+function Model({
+  modelPath,
+  selectedColors,
+  onOriginalColors,
+  onMaterialNames,
+}) {
   const { scene } = useGLTF(modelPath);
   const ref = useRef();
 
@@ -137,21 +166,25 @@ function Model({ selectedColors, onOriginalColors, onMaterialNames }) {
 }
 
 export default function NikeTape() {
+  const [selectedModelIndex, setSelectedModelIndex] = useState(0);
   const [materialNames, setMaterialNames] = useState([]);
   const [originalColors, setOriginalColors] = useState([]);
   const [selectedColors, setSelectedColors] = useState([]);
   const [customizingIndex, setCustomizingIndex] = useState(null);
   const [customColor, setCustomColor] = useState("#000000");
   const [showDialog, setShowDialog] = useState(false);
-  const [showColorPanel, setShowColorPanel] = useState(defaultShowColorPanel);
+  const [showColorPanel, setShowColorPanel] = useState(isDevMode);
   const dialogRef = useRef(null);
   const colorPanelRef = useRef(null);
 
+  // Preload the initial model
+  useGLTF.preload(modelPaths[selectedModelIndex].path);
+
   // Create material options from material names
   const materialOptions = useMemo(() => {
-    return materialNames.map((name) => ({
+    return materialNames.map((name, index) => ({
       name,
-      colors: [...initialColors],
+      colors: [...initialColors[index]],
     }));
   }, [materialNames]);
 
@@ -181,6 +214,10 @@ export default function NikeTape() {
     };
   }, [showDialog]);
 
+  // const onSelectModel = (index) => {
+  //   setSelectModelIndex(index);
+  // }
+
   const updateSelectedColor = (index, color) => {
     setSelectedColors((prev) => {
       const updated = [...prev];
@@ -204,8 +241,16 @@ export default function NikeTape() {
 
   return (
     <div className="relative w-screen h-screen bg-gray-100 flex flex-col overflow-hidden">
+      {/* Model Name Debug Panel */}
       {isDevMode && (
-        <div className="absolute top-12 left-0 m-4 p-4 bg-slate-800/50 text-white rounded shadow-lg z-50 max-w-xs backdrop-blur-sm">
+        <div className="flex flex-row justify-start p-3 text-slate-500">
+          <div className="text-xl font-semibold">{modelName}</div>
+        </div>
+      )}
+
+      {/* Material Names Debug Panel */}
+      {isDevMode && (
+        <div className="absolute top-12 right-0 z-50 m-4 p-4 bg-slate-800/50 text-white rounded shadow-lg  max-w-xs backdrop-blur-sm">
           <h3 className="font-semibold mb-2">Material Names</h3>
           <ul className="space-y-1 text-sm">
             {materialNames.length > 0 ? (
@@ -220,104 +265,6 @@ export default function NikeTape() {
           </ul>
         </div>
       )}
-
-      {isShowModelName && (
-        <div className="flex flex-row justify-start p-3 text-slate-500">
-          <h2 className="text-xl font-semibold">{modelName}</h2>
-        </div>
-      )}
-
-      <div ref={colorPanelRef} className="absolute z-50 left-0 bottom-0 w-full">
-        <div
-          onClick={() => setShowColorPanel((prev) => !prev)}
-          className="w-max m-5 p-3 rounded-full shadow-md bg-white text-2xl text-slate-600 cursor-pointer"
-        >
-          <div
-            className={`transition-all duration-500 ${
-              !showColorPanel ? "" : "rotate-180"
-            }`}
-          >
-            <Icon icon="icon-park-solid:up-one" />
-          </div>
-        </div>
-
-        <div
-          className={`w-full transition-all duration-300 ${
-            showColorPanel ? "bg-white shadow-md" : "bg-transparent"
-          }`}
-        >
-          <div
-            className={`transition-all duration-200 ease-in-out ${
-              showColorPanel
-                ? "max-h-[1000px] opacity-100"
-                : "max-h-0 opacity-0"
-            }`}
-          >
-            <div
-              className={`
-                flex flex-col md:flex-row
-                gap-4 md:gap-10
-                ${showColorPanel ? "" : "pointer-events-none opacity-0"}
-                md:overflow-x-auto md:overflow-y-hidden
-                overflow-y-auto md:h-auto
-                max-h-[30vh] md:max-h-none
-                px-6 py-4
-              `}
-            >
-              {materialOptions.map((matItem, index) => {
-                const selected = selectedColors[index]?.color || "transparent";
-                const originalColor = originalColors[index] || "#000000";
-                return (
-                  <div key={index} className="flex flex-col">
-                    <div className="flex flex-row items-center gap-2">
-                      <div className="font-semibold whitespace-nowrap">
-                        Color #{index + 1}
-                      </div>
-                      <div className="text-xs text-gray-400">
-                        ({matItem.name})
-                      </div>
-                    </div>
-                    <div className="flex flex-row justify-start items-center gap-2 overflow-x-auto overflow-y-visible px-1 pt-2">
-                      <button
-                        onClick={() =>
-                          updateSelectedColor(index, originalColor)
-                        }
-                        className={`w-10 h-10 rounded-full transition-all duration-100 border-4 ${
-                          selected === originalColor
-                            ? "border-blue-500"
-                            : "border-slate-300"
-                        }`}
-                        style={{ background: originalColor }}
-                        title="Original Color"
-                      />
-                      {matItem.colors.map((color, i) => (
-                        <button
-                          key={color + i}
-                          onClick={() => updateSelectedColor(index, color)}
-                          className={`w-10 h-10 rounded-full border-4 cursor-pointer ${
-                            selected === color
-                              ? "border-blue-500"
-                              : "border-slate-300"
-                          }`}
-                          style={{ background: color }}
-                          title={`Color ${i + 1}`}
-                        />
-                      ))}
-                      <button
-                        onClick={() => openCustomColorDialog(index)}
-                        className="w-10 h-10 rounded-full border-2 border-slate-400 flex items-center justify-center text-xl font-bold text-slate-600 cursor-pointer"
-                        title="Add custom color"
-                      >
-                        <div className="-translate-y-0.5">+</div>
-                      </button>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        </div>
-      </div>
 
       {showDialog && (
         <div className="fixed inset-0 bg-transparent flex items-center justify-center z-50">
@@ -371,11 +318,155 @@ export default function NikeTape() {
         </div>
       )}
 
+      <div
+        className={`absolute ${
+          isDevMode ? "top-12" : "top-0"
+        } left-0 z-50 m-4 p-4 bg-white/40 backdrop-blur-md rounded px-4 py-2`}
+      >
+        <div className="flex flex-col gap-6 py-4">
+          {modelPaths.map((model, index) => {
+            const isCustomize = model.colors.length === 0;
+
+            const style = isCustomize
+              ? {
+                  background: `conic-gradient(red, yellow, lime, aqua, blue, magenta, red)`,
+                }
+              : {
+                  background: `linear-gradient(135deg, ${model.colors
+                    .map((c, i, arr) => {
+                      const start = (i / arr.length) * 100;
+                      const end = ((i + 1) / arr.length) * 100;
+                      return `${c} ${start}%, ${c} ${end}%`;
+                    })
+                    .join(", ")})`,
+                };
+
+            return (
+              <div
+                key={index}
+                onClick={() => {
+                  setShowColorPanel(false)
+                  setSelectedModelIndex(index)
+                }}
+                className={`w-10 h-10 rounded-full transition-all duration-100 border-4 cursor-pointer ${
+                  selectedModelIndex === index
+                    ? "border-blue-500"
+                    : "border-slate-300"
+                }`}
+                title={`${model.name}`}
+                style={style}
+              ></div>
+            );
+          })}
+        </div>
+      </div>
+
+      {selectedModelIndex == modelPaths.length - 1 && (
+        <div
+          ref={colorPanelRef}
+          className="absolute z-50 left-0 bottom-0 w-full"
+        >
+          <div
+            onClick={() => setShowColorPanel((prev) => !prev)}
+            className="w-max m-5 p-3 rounded-full shadow-md bg-white/60 backdrop-blur-md text-2xl text-slate-600 cursor-pointer"
+          >
+            <div
+              className={`transition-all duration-500 ${
+                !showColorPanel ? "" : "rotate-180"
+              }`}
+            >
+              <Icon icon="icon-park-solid:up-one" />
+            </div>
+          </div>
+
+          <div
+            className={`w-full transition-all duration-300 ${
+              showColorPanel
+                ? "bg-white/60 backdrop-blur-md shadow-md"
+                : "bg-transparent"
+            }`}
+          >
+            <div
+              className={`transition-all duration-200 ease-in-out ${
+                showColorPanel
+                  ? "max-h-[1000px] opacity-100"
+                  : "max-h-0 opacity-0"
+              }`}
+            >
+              <div
+                className={`
+                flex flex-col md:flex-row
+                gap-4 md:gap-10
+                ${showColorPanel ? "" : "pointer-events-none opacity-0"}
+                md:overflow-x-auto md:overflow-y-hidden
+                overflow-y-auto md:h-auto
+                max-h-[30vh] md:max-h-none
+                px-6 py-4
+              `}
+              >
+                {materialOptions.map((matItem, index) => {
+                  const selected =
+                    selectedColors[index]?.color || "transparent";
+                  const originalColor = originalColors[index] || "#000000";
+                  return (
+                    <div key={index} className="flex flex-col">
+                      <div className="flex flex-row items-center gap-2">
+                        <div className="font-semibold whitespace-nowrap">
+                          Color #{index + 1}
+                        </div>
+                        <div className="text-xs text-gray-400">
+                          ({matItem.name})
+                        </div>
+                      </div>
+                      <div className="flex flex-row justify-start items-center gap-2 overflow-x-auto overflow-y-visible px-1 pt-2">
+                        <button
+                          onClick={() =>
+                            updateSelectedColor(index, originalColor)
+                          }
+                          className={`w-10 h-10 rounded-full transition-all duration-100 border-4 ${
+                            selected === originalColor
+                              ? "border-blue-500"
+                              : "border-slate-300"
+                          }`}
+                          style={{ background: originalColor }}
+                          title="Original Color"
+                        />
+                        {matItem.colors.map((color, i) => (
+                          <button
+                            key={color + i}
+                            onClick={() => updateSelectedColor(index, color)}
+                            className={`w-10 h-10 rounded-full border-4 cursor-pointer ${
+                              selected === color
+                                ? "border-blue-500"
+                                : "border-slate-300"
+                            }`}
+                            style={{ background: color }}
+                            title={`Color ${i + 1}`}
+                          />
+                        ))}
+                        <button
+                          onClick={() => openCustomColorDialog(index)}
+                          className="w-10 h-10 rounded-full border-4 border-slate-300 bg-white flex items-center justify-center text-xl font-bold text-slate-600 cursor-pointer"
+                          title="Add custom color"
+                        >
+                          <div className="-translate-y-[3px]">+</div>
+                        </button>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="flex-grow transition-all duration-300">
         <Canvas camera={{ position: [0, 1, 3], fov: 50 }}>
           <ambientLight intensity={0.5} />
           <directionalLight position={[10, 10, 5]} intensity={1} />
           <Model
+            modelPath={modelPaths[selectedModelIndex].path}
             selectedColors={selectedColors}
             onOriginalColors={setOriginalColors}
             onMaterialNames={setMaterialNames}
