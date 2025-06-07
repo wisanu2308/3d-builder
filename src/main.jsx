@@ -5,10 +5,8 @@ import "./App.css";
 import App from "./App.jsx";
 import AnyaForger from "./routes/_AnyaForger.jsx";
 import Example from "./routes/_Example.jsx";
-import Backpack from "./routes/Backpack.jsx";
-import FabricSale from "./routes/FabricSale.jsx";
-
-// import "./index.css";
+import NikeTape from "./routes/product/NikeTape.jsx";
+import NikeSweater from "./routes/product/Sweater.jsx";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
@@ -17,8 +15,8 @@ ReactDOM.createRoot(document.getElementById("root")).render(
         <Route path="/" element={<App />} />
         <Route path="/anya-forger" element={<AnyaForger />} />
         <Route path="/example" element={<Example />} />
-        <Route path="/backpack" element={<Backpack />} />
-        <Route path="/fabric-sale" element={<FabricSale />} />
+        <Route path="/nike-tape" element={<NikeTape />} />
+        <Route path="/nike-sweater" element={<NikeSweater />} />
       </Routes>
     </BrowserRouter>
   </React.StrictMode>

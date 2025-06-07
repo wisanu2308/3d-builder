@@ -23,8 +23,8 @@ export default function App() {
   };
 
   const ModelItems = ({ title, url }) => (
-    <div className="w-full flex flex-col items-start px-3">
-      <div className="w-full md:w-1/2 mx-auto flex flex-row justify-between items-center gap-4 border p-4">
+    <div className="w-full flex flex-col items-start">
+      <div className="w-full flex flex-row justify-between items-center gap-4 border p-4">
         <div className="w-1/2">
           <div>{title}</div>
         </div>
@@ -48,12 +48,25 @@ export default function App() {
   return (
     <div className="w-full flex flex-col justify-center items-center text-xl py-10 gap-10">
       <div className="text-3xl font-bold">3D Builder</div>
-      <div className="w-full flex flex-col items-start gap-2">
-        <ModelItems title={"(( ≖‿ ≖ ))"} url="/anya-forger" />
-        <ModelItems title={"Example Mesh"} url="/example" />
-        <ModelItems title={"Backpack"} url="/backpack" />
-        <ModelItems title={"Fabric Sale"} url="/fabric-sale" />
+
+      <div className="w-full md:w-1/2 mx-auto flex flex-col items-start px-3 gap-2">
+        <div className="text-2xl font-semibold">Example</div>
+        <div className="w-full flex flex-col items-start gap-2">
+          <ModelItems title={"(( ≖‿ ≖ ))"} url="/anya-forger" />
+          <ModelItems title={"Example Mesh"} url="/example" />
+        </div>
       </div>
+
+      <div className="w-full md:w-1/2 mx-auto flex flex-col items-start px-3 gap-2">
+        <div className="text-2xl font-semibold">LY Product</div>
+        <div className="w-full flex flex-col items-start gap-2">
+          <ModelItems title={"NikeTape"} url="/nike-tape" />
+          <ModelItems title={"Sweater with Tape"} url="/nike-sweater" />
+        </div>
+      </div>
+
+
+
     </div>
   );
 }
