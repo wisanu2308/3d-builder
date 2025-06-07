@@ -6,11 +6,11 @@ import * as THREE from "three";
 import { AppConfig } from "../../AppConfig";
 
 const isDevMode = AppConfig.devMode;
-const modelPath = "/models/NikeTape.glb";
+const modelPath = "/models/NikeTape_Split.glb";
 const modelName = "Nike Tape";
 const defaultShowColorPanel = isDevMode;
 const isShowModelName = isDevMode;
-const initialColors = ["#F4A261", "#C0C0C0"];
+const initialColors = ["#EBE12D", "#686868", "#FFFFFF"];
 
 function Model({ selectedColors, onOriginalColors, onMaterialNames }) {
   const { scene } = useGLTF(modelPath);
