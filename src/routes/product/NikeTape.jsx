@@ -1,16 +1,13 @@
 import { Icon } from "@iconify/react";
-import { OrbitControls, useGLTF } from "@react-three/drei";
+import { Html, OrbitControls, useGLTF, useProgress } from "@react-three/drei";
 import { Canvas, useFrame } from "@react-three/fiber";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { Suspense, useEffect, useMemo, useRef, useState } from "react";
 import * as THREE from "three";
 import { AppConfig } from "../../AppConfig";
 
 const isDevMode = AppConfig.devMode;
 
 useGLTF.preload("/models/NikeTape_Black-Red.glb");
-useGLTF.preload("/models/NikeTape_Grey-Yellow.glb");
-useGLTF.preload("/models/NikeTape_White-Red.glb");
-useGLTF.preload("/models/NikeTape_Split.glb");
 
 const modelName = "Nike Tape";
 const modelPaths = [
@@ -43,12 +40,31 @@ const initialColors = [
   ["#A0522D", "#8B4513", "#D2B48C"],
 ];
 
+function Loader() {
+  const { progress } = useProgress();
+  return (
+    <Html center>
+      <div className="flex flex-col items-center justify-center text-slate-700">
+        <div className="w-48 bg-gray-200 h-2 rounded-full overflow-hidden mb-2">
+          <div
+            className="bg-blue-500 h-2 transition-all"
+            style={{ width: `${progress}%` }}
+          />
+        </div>
+        <p className="text-sm">{progress.toFixed(0)}% Loading</p>
+      </div>
+    </Html>
+  );
+}
+
 function Model({
   modelPath,
   selectedColors,
   onMaterialNames,
   onOriginalColors,
 }) {
+
+  useGLTF.preload(modelPath);
   const { scene } = useGLTF(modelPath);
   const ref = useRef();
 
@@ -433,12 +449,14 @@ export default function NikeTape() {
         <Canvas camera={{ position: [0, 1, 3], fov: 50 }}>
           <ambientLight intensity={0.5} />
           <directionalLight position={[10, 10, 5]} intensity={1} />
-          <Model
-            modelPath={modelPaths[selectedModelIndex].path}
-            selectedColors={selectedColors}
-            onMaterialNames={setMaterialNames}
-            onOriginalColors={setOriginalColors}
-          />
+          <Suspense fallback={<Loader />}>
+            <Model
+              modelPath={modelPaths[selectedModelIndex].path}
+              selectedColors={selectedColors}
+              onMaterialNames={setMaterialNames}
+              onOriginalColors={setOriginalColors}
+            />
+          </Suspense>
           <OrbitControls />
         </Canvas>
       </div>
