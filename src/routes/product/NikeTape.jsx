@@ -14,7 +14,7 @@ const modelPaths = [
   {
     name: "Black-Red",
     colors: ["#000000", "#FF0000"],
-    path: "/models/NikeTape_Black-Red.glb",
+    path: "/models/NikeTape.glb",
   },
   {
     name: "Gray-Yellow",
@@ -63,7 +63,6 @@ function Model({
   onMaterialNames,
   onOriginalColors,
 }) {
-
   useGLTF.preload(modelPath);
   const { scene } = useGLTF(modelPath);
   const ref = useRef();
@@ -447,8 +446,22 @@ export default function NikeTape() {
 
       <div className="flex-grow transition-all duration-300">
         <Canvas camera={{ position: [0, 1, 3], fov: 50 }}>
-          <ambientLight intensity={0.5} />
-          <directionalLight position={[10, 10, 5]} intensity={1} />
+          {/* แสงรอบทิศทางเบื้องต้น */}
+          <ambientLight intensity={1.5} />
+
+          {/* Directional Light จากด้านบน */}
+          <directionalLight position={[0, 3, 0]} intensity={5} castShadow />
+
+          {/* Directional Light จากด้านล่าง */}
+          <directionalLight position={[0, -3, -0]} intensity={5} />
+
+          {/* เติมด้วย HemisphereLight เพื่อความสมดุลของแสงด้านบน/ล่าง */}
+          <hemisphereLight
+            skyColor={"white"}
+            groundColor={"#444"}
+            intensity={0.8}
+          />
+
           <Suspense fallback={<Loader />}>
             <Model
               modelPath={modelPaths[selectedModelIndex].path}
